@@ -1,5 +1,5 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -8,8 +8,10 @@ export const metadata: Metadata = {
   title: 'Tic-Tac-Toe PWA',
   description: 'A simple Tic-Tac-Toe game as a Progressive Web App',
   manifest: '/manifest.json',
+}
+
+export const viewport: Viewport = {
   themeColor: 'black',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 }
 
 export default function RootLayout({
