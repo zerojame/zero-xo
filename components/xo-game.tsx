@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 
 type Player = 'X' | 'O' | null
@@ -9,6 +9,37 @@ const XOGame = () => {
   const [board, setBoard] = useState<Player[]>(Array(9).fill(null))
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X')
   const [winner, setWinner] = useState<Player>(null)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+  const [isInstallable, setIsInstallable] = useState(false)
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      setIsInstallable(true)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    }
+  }, [])
+
+  const handleInstall = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt()
+      deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt')
+        } else {
+          console.log('User dismissed the install prompt')
+        }
+        setDeferredPrompt(null)
+        setIsInstallable(false)
+      })
+    }
+  }
 
   const checkWinner = useCallback((board: Player[]): Player => {
     const lines = [
@@ -76,9 +107,14 @@ const XOGame = () => {
           ? "It's a draw!"
           : `Current player: ${currentPlayer}`}
       </div>
-      <Button onClick={resetGame} className="px-4 py-2">
+      <Button onClick={resetGame} className="px-4 py-2 mb-4">
         Reset Game
       </Button>
+      {isInstallable && (
+        <Button onClick={handleInstall} className="px-4 py-2">
+          Install App
+        </Button>
+      )}
     </div>
   )
 }
