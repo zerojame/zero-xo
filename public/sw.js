@@ -5,8 +5,8 @@ self.addEventListener('install', (event) => {
         '/',
         '/index.html',
         '/xo-game.js',
-        '/icon-192x192.png',
-        '/icon-512x512.png',
+        '/icon-192x192.jpg',
+        '/icon-512x512.jpg',
       ])
     })
   )

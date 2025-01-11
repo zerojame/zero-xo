@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import XOGame from '@/components/xo-game'
-import InstallPrompt from '@/components/install-prompt'
+// import InstallPrompt from '@/components/install-prompt'
 
 export default function Home() {
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function Home() {
 
   return (
     <main>
-      <InstallPrompt />
+      {/* <InstallPrompt /> */}
       <XOGame />
     </main>
   )
