@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'A simple Tic-Tac-Toe game as a Progressive Web App',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#000000',
+    background_color: 'white',
+    theme_color: 'black',
     icons: [
       {
         src: '/icon-192x192.jpg',

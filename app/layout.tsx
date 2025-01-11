@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Tic-Tac-Toe PWA',
   description: 'A simple Tic-Tac-Toe game as a Progressive Web App',
   manifest: '/manifest.json',
-  themeColor: '#000000',
+  themeColor: 'black',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 }
 
