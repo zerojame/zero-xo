@@ -68,7 +68,7 @@ const XOGame = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
       <div className="grid grid-cols-3 gap-2 mb-4">
-        {board.map((row, rowIndex) =>
+        {board.flatMap((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <Button
               key={`${rowIndex}-${colIndex}`}
