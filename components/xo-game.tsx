@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { type Player } from '../lib/check-winner'
 
 const XOGame = () => {
+  const [gameStarted, setGameStarted] = useState(false)
+  const [gameMode, setGameMode] = useState<'1p' | '2p'>('2p')
   const [board, setBoard] = useState<Record<string, Player>>({})
   const [minRow, setMinRow] = useState(0)
   const [maxRow, setMaxRow] = useState(0)
@@ -96,6 +98,26 @@ const XOGame = () => {
     setMaxCol(0)
     setCurrentPlayer('X')
     setWinner(null)
+    setGameStarted(false)
+    setGameMode('2p')
+  }
+
+  if (!gameStarted) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
+        <div className="flex gap-4 mb-4">
+          <Button disabled>1 Player (bot)</Button>
+          <Button
+            variant={gameMode === '2p' ? 'default' : 'outline'}
+            onClick={() => setGameMode('2p')}
+          >
+            2 Players
+          </Button>
+        </div>
+        <Button onClick={() => setGameStarted(true)}>Start</Button>
+      </div>
+    )
   }
 
   return (
