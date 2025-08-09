@@ -99,7 +99,6 @@ const XOGame = () => {
     setCurrentPlayer('X')
     setWinner(null)
     setGameStarted(false)
-    setGameMode('2p')
   }
 
   if (!gameStarted) {
@@ -107,7 +106,12 @@ const XOGame = () => {
       <div className="flex flex-col items-center justify-center min-h-screen bg-[hsl(var(--board-bg))]">
         <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
         <div className="flex gap-4 mb-4">
-          <Button disabled>1 Player (bot)</Button>
+          <Button
+            variant={gameMode === '1p' ? 'default' : 'outline'}
+            onClick={() => setGameMode('1p')}
+          >
+            1 Player (bot)
+          </Button>
           <Button
             variant={gameMode === '2p' ? 'default' : 'outline'}
             onClick={() => setGameMode('2p')}
