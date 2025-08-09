@@ -104,7 +104,7 @@ const XOGame = () => {
 
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[hsl(var(--board-bg))]">
         <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
         <div className="flex gap-4 mb-4">
           <Button disabled>1 Player (bot)</Button>
@@ -115,13 +115,18 @@ const XOGame = () => {
             2 Players
           </Button>
         </div>
-        <Button onClick={() => setGameStarted(true)}>Start</Button>
+        <Button
+          onClick={() => setGameStarted(true)}
+          className="bg-accent text-accent-foreground hover:bg-accent/90"
+        >
+          Start
+        </Button>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[hsl(var(--board-bg))]">
       <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
       {(() => {
         const renderMinRow = minRow - 1
@@ -138,8 +143,8 @@ const XOGame = () => {
               <Button
                 key={key}
                 onClick={() => handleClick(r, c)}
-                className="w-20 h-20 text-4xl font-bold"
-                variant={cell ? "default" : "outline"}
+                className={`w-20 h-20 text-4xl font-bold ${cell === 'X' ? 'text-[hsl(var(--x-color))]' : cell === 'O' ? 'text-[hsl(var(--o-color))]' : ''}`}
+                variant={cell ? 'default' : 'outline'}
                 disabled={!!cell || !!winner}
               >
                 {cell}
@@ -149,7 +154,7 @@ const XOGame = () => {
         }
         return (
           <div
-            className="grid gap-2 mb-4"
+            className="grid gap-2 mb-4 bg-[hsl(var(--board-bg))]"
             style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
           >
             {cells}
@@ -163,7 +168,10 @@ const XOGame = () => {
           ? "It's a draw!"
           : `Current player: ${currentPlayer}`}
       </div>
-      <Button onClick={resetGame} className="px-4 py-2 mb-4">
+      <Button
+        onClick={resetGame}
+        className="px-4 py-2 mb-4 bg-accent text-accent-foreground hover:bg-accent/90"
+      >
         Reset Game
       </Button>
       {isInstallable && (
