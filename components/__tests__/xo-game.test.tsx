@@ -1,5 +1,5 @@
-import { describe, it, expect, test } from 'vitest'
-import { checkWinner, type Player, type Board } from '../../lib/check-winner'
+import { describe, it, expect, test } from "vitest"
+import { checkWinner, type Player, type Board } from "../../lib/check-winner"
 
 describe('checkWinner', () => {
   const lines: number[][] = [

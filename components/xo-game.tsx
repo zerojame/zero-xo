@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { checkWinner, type Player, type Board } from '../lib/check-winner'
+import { checkWinner, type Player, type Board } from "@/lib/check-winner"
 
 const XOGame = () => {
   const createEmptyBoard = (): Board =>
