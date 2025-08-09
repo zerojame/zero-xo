@@ -2,37 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { type Player, type Board } from '../lib/check-winner'
+import { type Player, type Board, checkWinner } from '../lib/check-winner'
 import { getBotMove } from '../lib/bot'
-
-const directions: Array<[number, number]> = [
-  [1, 0],
-  [0, 1],
-  [1, 1],
-  [1, -1],
-]
-
-function checkWinnerFromMove(
-  board: Board,
-  row: number,
-  col: number,
-  player: Player,
-): Player {
-  for (const [dr, dc] of directions) {
-    let count = 1
-    for (const dir of [1, -1]) {
-      let r = row + dr * dir
-      let c = col + dc * dir
-      while (board[`${r},${c}`] === player) {
-        count++
-        r += dr * dir
-        c += dc * dir
-      }
-    }
-    if (count >= 5) return player
-  }
-  return null
-}
 
 const XOGame = () => {
   const [gameStarted, setGameStarted] = useState(false)
@@ -90,8 +61,8 @@ const XOGame = () => {
     setMinCol(Math.min(minCol, col))
     setMaxCol(Math.max(maxCol, col))
 
-    // Check for a winner from the last move
-    const foundWinner = checkWinnerFromMove(newBoard, row, col, currentPlayer)
+    // Check for a winner after the move
+    const foundWinner = checkWinner(newBoard)
     if (foundWinner) {
       setWinner(foundWinner)
       return
@@ -111,7 +82,7 @@ const XOGame = () => {
         setMinCol((prev) => Math.min(prev, botCol))
         setMaxCol((prev) => Math.max(prev, botCol))
 
-        const botWinner = checkWinnerFromMove(botBoard, botRow, botCol, 'O')
+        const botWinner = checkWinner(botBoard)
         if (botWinner) {
           setWinner(botWinner)
         } else {
