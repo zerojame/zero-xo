@@ -5,31 +5,29 @@ export type Board = Record<string, Player>
 // Scans a dynamic board for any horizontal, vertical or diagonal sequence of
 // five identical symbols. The board is represented as a record keyed by
 // "row,col". Only occupied cells need to be present.
+// Directions to search: horizontal, vertical, diagonal and anti-diagonal.
+const directions: Array<[number, number]> = [
+  [1, 0],
+  [0, 1],
+  [1, 1],
+  [1, -1],
+]
+
 export const checkWinner = (board: Board): Player => {
-  // Directions: horizontal, vertical, diagonal, anti-diagonal
-  const directions: Array<[number, number]> = [
-    [1, 0],
-    [0, 1],
-    [1, 1],
-    [1, -1],
-  ]
-
-  for (const key of Object.keys(board)) {
-    const player = board[key]
+  for (const [key, player] of Object.entries(board)) {
     if (!player) continue
-
     const [row, col] = key.split(',').map(Number)
 
-    for (const [dr, dc] of directions) {
+    for (const [dRow, dCol] of directions) {
       let count = 1
-      let r = row + dr
-      let c = col + dc
+      let r = row + dRow
+      let c = col + dCol
 
       while (board[`${r},${c}`] === player) {
         count++
         if (count >= 5) return player
-        r += dr
-        c += dc
+        r += dRow
+        c += dCol
       }
     }
   }
