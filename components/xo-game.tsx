@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { checkWinner, type Player } from '../lib/check-winner'
+import { type Player } from '../lib/check-winner'
 
 const XOGame = () => {
-  const [board, setBoard] = useState<Player[]>(Array(9).fill(null))
+  const [board, setBoard] = useState<Record<string, Player>>({})
+  const [minRow, setMinRow] = useState(0)
+  const [maxRow, setMaxRow] = useState(0)
+  const [minCol, setMinCol] = useState(0)
+  const [maxCol, setMaxCol] = useState(0)
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X')
   const [winner, setWinner] = useState<Player>(null)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
@@ -40,23 +44,56 @@ const XOGame = () => {
     }
   }
 
-  const handleClick = (index: number) => {
-    if (board[index] || winner) return
+  const handleClick = (row: number, col: number) => {
+    const key = `${row},${col}`
+    if (board[key] || winner) return
 
-    const newBoard = [...board]
-    newBoard[index] = currentPlayer
+    const newBoard = { ...board, [key]: currentPlayer }
     setBoard(newBoard)
 
-    const newWinner = checkWinner(newBoard)
-    if (newWinner) {
-      setWinner(newWinner)
+    // Update bounds for rendering
+    setMinRow(Math.min(minRow, row))
+    setMaxRow(Math.max(maxRow, row))
+    setMinCol(Math.min(minCol, col))
+    setMaxCol(Math.max(maxCol, col))
+
+    // Check for a winner from the last move
+    const directions = [
+      [1, 0],
+      [0, 1],
+      [1, 1],
+      [1, -1],
+    ]
+    let foundWinner: Player = null
+    for (const [dr, dc] of directions) {
+      let count = 1
+      for (const dir of [1, -1]) {
+        let r = row + dr * dir
+        let c = col + dc * dir
+        while (newBoard[`${r},${c}`] === currentPlayer) {
+          count++
+          r += dr * dir
+          c += dc * dir
+        }
+      }
+      if (count >= 3) {
+        foundWinner = currentPlayer
+        break
+      }
+    }
+    if (foundWinner) {
+      setWinner(foundWinner)
     } else {
       setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
     }
   }
 
   const resetGame = () => {
-    setBoard(Array(9).fill(null))
+    setBoard({})
+    setMinRow(0)
+    setMaxRow(0)
+    setMinCol(0)
+    setMaxCol(0)
     setCurrentPlayer('X')
     setWinner(null)
   }
@@ -64,23 +101,43 @@ const XOGame = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
-      <div className="grid grid-cols-3 gap-2 mb-4">
-        {board.map((cell, index) => (
-          <Button
-            key={index}
-            onClick={() => handleClick(index)}
-            className="w-20 h-20 text-4xl font-bold"
-            variant={cell ? "default" : "outline"}
-            disabled={!!cell || !!winner}
+      {(() => {
+        const renderMinRow = minRow - 1
+        const renderMaxRow = maxRow + 1
+        const renderMinCol = minCol - 1
+        const renderMaxCol = maxCol + 1
+        const cols = renderMaxCol - renderMinCol + 1
+        const cells = []
+        for (let r = renderMinRow; r <= renderMaxRow; r++) {
+          for (let c = renderMinCol; c <= renderMaxCol; c++) {
+            const key = `${r},${c}`
+            const cell = board[key]
+            cells.push(
+              <Button
+                key={key}
+                onClick={() => handleClick(r, c)}
+                className="w-20 h-20 text-4xl font-bold"
+                variant={cell ? "default" : "outline"}
+                disabled={!!cell || !!winner}
+              >
+                {cell}
+              </Button>
+            )
+          }
+        }
+        return (
+          <div
+            className="grid gap-2 mb-4"
+            style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
           >
-            {cell}
-          </Button>
-        ))}
-      </div>
+            {cells}
+          </div>
+        )
+      })()}
       <div className="text-2xl font-semibold mb-4">
         {winner
           ? `Winner: ${winner}`
-          : board.every((cell) => cell !== null)
+          : Object.keys(board).length === 9 && !winner
           ? "It's a draw!"
           : `Current player: ${currentPlayer}`}
       </div>
