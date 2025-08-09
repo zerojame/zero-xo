@@ -78,7 +78,7 @@ const XOGame = () => {
           c += dc * dir
         }
       }
-      if (count >= 3) {
+      if (count >= 5) {
         foundWinner = currentPlayer
         break
       }

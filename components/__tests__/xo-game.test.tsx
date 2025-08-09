@@ -7,6 +7,8 @@ describe('checkWinner', () => {
       '5,5': 'X',
       '5,6': 'X',
       '5,7': 'X',
+      '5,8': 'X',
+      '5,9': 'X',
     }
     expect(checkWinner(board)).toBe('X')
   })
@@ -16,6 +18,8 @@ describe('checkWinner', () => {
       '5,5': 'O',
       '6,5': 'O',
       '7,5': 'O',
+      '8,5': 'O',
+      '9,5': 'O',
     }
     expect(checkWinner(board)).toBe('O')
   })
@@ -25,15 +29,19 @@ describe('checkWinner', () => {
       '5,5': 'X',
       '6,6': 'X',
       '7,7': 'X',
+      '8,8': 'X',
+      '9,9': 'X',
     }
     expect(checkWinner(board)).toBe('X')
   })
 
   it('detects an anti-diagonal win away from the origin', () => {
     const board: Board = {
-      '7,5': 'O',
-      '6,6': 'O',
-      '5,7': 'O',
+      '9,5': 'O',
+      '8,6': 'O',
+      '7,7': 'O',
+      '6,8': 'O',
+      '5,9': 'O',
     }
     expect(checkWinner(board)).toBe('O')
   })
