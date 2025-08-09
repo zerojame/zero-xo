@@ -3,7 +3,7 @@ export type Player = 'X' | 'O' | null
 export type Board = Record<string, Player>
 
 // Scans a dynamic board for any horizontal, vertical or diagonal sequence of
-// three identical symbols. The board is represented as a record keyed by
+// five identical symbols. The board is represented as a record keyed by
 // "row,col". Only occupied cells need to be present.
 export const checkWinner = (board: Board): Player => {
   // Directions: horizontal, vertical, diagonal, anti-diagonal
@@ -27,7 +27,7 @@ export const checkWinner = (board: Board): Player => {
 
       while (board[`${r},${c}`] === player) {
         count++
-        if (count >= 3) return player
+        if (count >= 5) return player
         r += dr
         c += dc
       }
