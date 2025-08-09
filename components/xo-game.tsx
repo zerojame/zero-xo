@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { type Player } from '../lib/check-winner'
+import { type Player, type Board } from '../lib/check-winner'
 import { getBotMove } from '../lib/bot'
 
 const directions: Array<[number, number]> = [
@@ -13,7 +13,7 @@ const directions: Array<[number, number]> = [
 ]
 
 function checkWinnerFromMove(
-  board: Record<string, Player>,
+  board: Board,
   row: number,
   col: number,
   player: Player,
@@ -37,7 +37,7 @@ function checkWinnerFromMove(
 const XOGame = () => {
   const [gameStarted, setGameStarted] = useState(false)
   const [gameMode, setGameMode] = useState<'1p' | '2p'>('2p')
-  const [board, setBoard] = useState<Record<string, Player>>({})
+  const [board, setBoard] = useState<Board>({})
   const [minRow, setMinRow] = useState(0)
   const [maxRow, setMaxRow] = useState(0)
   const [minCol, setMinCol] = useState(0)
@@ -81,7 +81,7 @@ const XOGame = () => {
     const key = `${row},${col}`
     if (board[key] || winner) return
 
-    const newBoard = { ...board, [key]: currentPlayer }
+    const newBoard: Board = { ...board, [key]: currentPlayer }
     setBoard(newBoard)
 
     // Update bounds for rendering
@@ -104,7 +104,7 @@ const XOGame = () => {
       setTimeout(() => {
         const [botRow, botCol] = getBotMove(newBoard, 'O')
         const botKey = `${botRow},${botCol}`
-        const botBoard = { ...newBoard, [botKey]: 'O' }
+        const botBoard: Board = { ...newBoard, [botKey]: 'O' }
         setBoard(botBoard)
         setMinRow((prev) => Math.min(prev, botRow))
         setMaxRow((prev) => Math.max(prev, botRow))
