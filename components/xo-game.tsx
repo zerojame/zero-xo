@@ -2,12 +2,42 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { type Player } from '../lib/check-winner'
+import { type Player, type Board } from '../lib/check-winner'
+import { getBotMove } from '../lib/bot'
+
+const directions: Array<[number, number]> = [
+  [1, 0],
+  [0, 1],
+  [1, 1],
+  [1, -1],
+]
+
+function checkWinnerFromMove(
+  board: Board,
+  row: number,
+  col: number,
+  player: Player,
+): Player {
+  for (const [dr, dc] of directions) {
+    let count = 1
+    for (const dir of [1, -1]) {
+      let r = row + dr * dir
+      let c = col + dc * dir
+      while (board[`${r},${c}`] === player) {
+        count++
+        r += dr * dir
+        c += dc * dir
+      }
+    }
+    if (count >= 5) return player
+  }
+  return null
+}
 
 const XOGame = () => {
   const [gameStarted, setGameStarted] = useState(false)
   const [gameMode, setGameMode] = useState<'1p' | '2p'>('2p')
-  const [board, setBoard] = useState<Record<string, Player>>({})
+  const [board, setBoard] = useState<Board>({})
   const [minRow, setMinRow] = useState(0)
   const [maxRow, setMaxRow] = useState(0)
   const [minCol, setMinCol] = useState(0)
@@ -47,10 +77,11 @@ const XOGame = () => {
   }
 
   const handleClick = (row: number, col: number) => {
+    if (gameMode === '1p' && currentPlayer === 'O') return
     const key = `${row},${col}`
     if (board[key] || winner) return
 
-    const newBoard = { ...board, [key]: currentPlayer }
+    const newBoard: Board = { ...board, [key]: currentPlayer }
     setBoard(newBoard)
 
     // Update bounds for rendering
@@ -60,33 +91,33 @@ const XOGame = () => {
     setMaxCol(Math.max(maxCol, col))
 
     // Check for a winner from the last move
-    const directions = [
-      [1, 0],
-      [0, 1],
-      [1, 1],
-      [1, -1],
-    ]
-    let foundWinner: Player = null
-    for (const [dr, dc] of directions) {
-      let count = 1
-      for (const dir of [1, -1]) {
-        let r = row + dr * dir
-        let c = col + dc * dir
-        while (newBoard[`${r},${c}`] === currentPlayer) {
-          count++
-          r += dr * dir
-          c += dc * dir
-        }
-      }
-      if (count >= 5) {
-        foundWinner = currentPlayer
-        break
-      }
-    }
+    const foundWinner = checkWinnerFromMove(newBoard, row, col, currentPlayer)
     if (foundWinner) {
       setWinner(foundWinner)
-    } else {
-      setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X')
+      return
+    }
+
+    const nextPlayer: Player = currentPlayer === 'X' ? 'O' : 'X'
+    setCurrentPlayer(nextPlayer)
+
+    if (gameMode === '1p' && nextPlayer === 'O') {
+      setTimeout(() => {
+        const [botRow, botCol] = getBotMove(newBoard, 'O')
+        const botKey = `${botRow},${botCol}`
+        const botBoard: Board = { ...newBoard, [botKey]: 'O' }
+        setBoard(botBoard)
+        setMinRow((prev) => Math.min(prev, botRow))
+        setMaxRow((prev) => Math.max(prev, botRow))
+        setMinCol((prev) => Math.min(prev, botCol))
+        setMaxCol((prev) => Math.max(prev, botCol))
+
+        const botWinner = checkWinnerFromMove(botBoard, botRow, botCol, 'O')
+        if (botWinner) {
+          setWinner(botWinner)
+        } else {
+          setCurrentPlayer('X')
+        }
+      }, 300)
     }
   }
 

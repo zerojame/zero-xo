@@ -46,14 +46,16 @@ describe('checkWinner', () => {
     expect(checkWinner(board)).toBe('O')
   })
 
-  it('handles negative coordinates in a win', () => {
-    const board: Board = {
-      '-1,-1': 'X',
-      '0,0': 'X',
-      '1,1': 'X',
-    }
-    expect(checkWinner(board)).toBe('X')
-  })
+    it('handles negative coordinates in a win', () => {
+      const board: Board = {
+        '-2,-2': 'X',
+        '-1,-1': 'X',
+        '0,0': 'X',
+        '1,1': 'X',
+        '2,2': 'X',
+      }
+      expect(checkWinner(board)).toBe('X')
+    })
 
   it('returns null for a draw', () => {
     const board: Board = {
