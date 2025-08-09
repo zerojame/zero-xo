@@ -1,11 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { checkWinner, type Player } from '../lib/check-winner'
+import { checkWinner, type Player, type Board } from "@/lib/check-winner"
+
+const BOARD_SIZE = 3
+
+const createEmptyBoard = (): Board =>
+  Array.from({ length: BOARD_SIZE }, () => Array<Player>(BOARD_SIZE).fill(null))
 
 const XOGame = () => {
-  const [board, setBoard] = useState<Player[]>(Array(9).fill(null))
+
+  const [board, setBoard] = useState<Board>(createEmptyBoard())
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X')
   const [winner, setWinner] = useState<Player>(null)
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
@@ -40,11 +46,11 @@ const XOGame = () => {
     }
   }
 
-  const handleClick = (index: number) => {
-    if (board[index] || winner) return
+  const handleClick = (row: number, col: number) => {
+    if (board[row][col] || winner) return
 
-    const newBoard = [...board]
-    newBoard[index] = currentPlayer
+    const newBoard = board.map((r) => r.slice())
+    newBoard[row][col] = currentPlayer
     setBoard(newBoard)
 
     const newWinner = checkWinner(newBoard)
@@ -56,7 +62,7 @@ const XOGame = () => {
   }
 
   const resetGame = () => {
-    setBoard(Array(9).fill(null))
+    setBoard(createEmptyBoard())
     setCurrentPlayer('X')
     setWinner(null)
   }
@@ -65,22 +71,24 @@ const XOGame = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-4xl font-bold mb-8">Tic-Tac-Toe</h1>
       <div className="grid grid-cols-3 gap-2 mb-4">
-        {board.map((cell, index) => (
-          <Button
-            key={index}
-            onClick={() => handleClick(index)}
-            className="w-20 h-20 text-4xl font-bold"
-            variant={cell ? "default" : "outline"}
-            disabled={!!cell || !!winner}
-          >
-            {cell}
-          </Button>
-        ))}
+        {board.flatMap((row, rowIndex) =>
+          row.map((cell, colIndex) => (
+            <Button
+              key={`${rowIndex}-${colIndex}`}
+              onClick={() => handleClick(rowIndex, colIndex)}
+              className="w-20 h-20 text-4xl font-bold"
+              variant={cell ? "default" : "outline"}
+              disabled={!!cell || !!winner}
+            >
+              {cell}
+            </Button>
+          ))
+        )}
       </div>
       <div className="text-2xl font-semibold mb-4">
         {winner
           ? `Winner: ${winner}`
-          : board.every((cell) => cell !== null)
+          : board.flat().every((cell) => cell !== null)
           ? "It's a draw!"
           : `Current player: ${currentPlayer}`}
       </div>
