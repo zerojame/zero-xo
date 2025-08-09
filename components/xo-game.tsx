@@ -4,9 +4,12 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { checkWinner, type Player, type Board } from "@/lib/check-winner"
 
+const BOARD_SIZE = 3
+
+const createEmptyBoard = (): Board =>
+  Array.from({ length: BOARD_SIZE }, () => Array<Player>(BOARD_SIZE).fill(null))
+
 const XOGame = () => {
-  const createEmptyBoard = (): Board =>
-    Array.from({ length: 3 }, () => Array<Player>(3).fill(null))
 
   const [board, setBoard] = useState<Board>(createEmptyBoard())
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X')
