@@ -1,37 +1,58 @@
-import { describe, it, expect, test } from 'vitest'
-import { checkWinner, type Player } from '../../lib/check-winner'
+import { describe, it, expect } from 'vitest'
+import { checkWinner, type Board } from '../../lib/check-winner'
 
 describe('checkWinner', () => {
-  const lines: number[][] = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ]
-
-  test.each(lines)('detects X win for positions %o', (a, b, c) => {
-    const board: Player[] = Array(9).fill(null)
-    board[a] = board[b] = board[c] = 'X'
+  it('detects a horizontal win', () => {
+    const board: Board = {
+      '0,0': 'X',
+      '0,1': 'X',
+      '0,2': 'X',
+    }
     expect(checkWinner(board)).toBe('X')
   })
 
-  test.each(lines)('detects O win for positions %o', (a, b, c) => {
-    const board: Player[] = Array(9).fill(null)
-    board[a] = board[b] = board[c] = 'O'
+  it('detects a vertical win', () => {
+    const board: Board = {
+      '5,5': 'O',
+      '6,5': 'O',
+      '7,5': 'O',
+    }
+    expect(checkWinner(board)).toBe('O')
+  })
+
+  it('detects a diagonal win', () => {
+    const board: Board = {
+      '1,1': 'X',
+      '2,2': 'X',
+      '3,3': 'X',
+    }
+    expect(checkWinner(board)).toBe('X')
+  })
+
+  it('detects an anti-diagonal win', () => {
+    const board: Board = {
+      '3,1': 'O',
+      '2,2': 'O',
+      '1,3': 'O',
+    }
     expect(checkWinner(board)).toBe('O')
   })
 
   it('returns null for a draw', () => {
-    const board: Player[] = ['X','O','X','X','O','O','O','X','X']
+    const board: Board = {
+      '0,0': 'X', '0,1': 'O', '0,2': 'X',
+      '1,0': 'X', '1,1': 'O', '1,2': 'O',
+      '2,0': 'O', '2,1': 'X', '2,2': 'X',
+    }
     expect(checkWinner(board)).toBeNull()
   })
 
   it('returns null for a non-terminal state', () => {
-    const board: Player[] = ['X','O','X',null,'O',null,null,'X',null]
+    const board: Board = {
+      '0,0': 'X', '0,1': 'O', '0,2': 'X',
+      '1,1': 'O',
+      '3,3': 'X',
+    }
     expect(checkWinner(board)).toBeNull()
   })
 })
